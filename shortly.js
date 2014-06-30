@@ -10,13 +10,14 @@ var Link = require('./app/models/link');
 var Click = require('./app/models/click');
 
 var app = express();
+var dirPath = "/Users/student/Code/justincheung/2014-06-shortly-express";
 
 app.configure(function() {
-  app.set('views', __dirname + '/views');
+  app.set('views', dirPath + '/views');
   app.set('view engine', 'ejs');
   app.use(partials());
   app.use(express.bodyParser())
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(dirPath + '/public'));
 });
 
 app.get('/', function(req, res) {
