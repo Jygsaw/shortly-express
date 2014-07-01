@@ -31,7 +31,7 @@ app.get('/create', function(req, res) {
 app.get('/links', function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
-  })
+  });
 });
 
 app.post('/links', function(req, res) {
@@ -81,8 +81,19 @@ app.get('/login', function (req, res) {
 
 app.post('/signup', function (req, res) {
   var newUser = new User(req.body).save();
+  res.render('index');
+});
 
-  res.send(200);
+app.post('/login', function (req, res) {
+  new User(req.body).fetch().then(function(model) {
+    if (model === null) {
+      console.log("Your memory sucks! Re-enter your password.");
+      res.render('login');
+    } else {
+      console.log("Success.");
+      res.render('index');
+    }
+  });
 });
 
 
