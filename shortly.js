@@ -80,10 +80,8 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/signup', function (req, res) {
-  console.log("Happy days");
-  var data = JSON.parse(req.body);
-  console.log("sweet: " + data.username);
-  console.log("dude: " + data.password);
+  var newUser = new User(req.body).save();
+
   res.send(200);
 });
 
