@@ -79,6 +79,14 @@ app.get('/login', function (req, res) {
   res.render('login');
 });
 
+app.post('/signup', function (req, res) {
+  console.log("Happy days");
+  var data = JSON.parse(req.body);
+  console.log("sweet: " + data.username);
+  console.log("dude: " + data.password);
+  res.send(200);
+});
+
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
