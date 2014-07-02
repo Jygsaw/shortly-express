@@ -82,6 +82,11 @@ app.get('/login', function (req, res) {
   res.render('login');
 });
 
+app.get('/logout', function (req, res) {
+  req.session.destroy();
+  res.render('login');
+});
+
 app.post('/signup', function (req, res) {
   var username = req.body.username;
   var password = req.body.password;
@@ -113,7 +118,6 @@ app.post('/login', function (req, res) {
     }
   });
 });
-
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
