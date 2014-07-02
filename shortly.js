@@ -16,8 +16,10 @@ app.configure(function() {
   app.set('views', dirPath + '/views');
   app.set('view engine', 'ejs');
   app.use(partials());
-  app.use(express.bodyParser())
+  app.use(express.bodyParser());
   app.use(express.static(dirPath + '/public'));
+  app.use(express.cookieParser());
+  app.use(express.cookieSession({secret: 'secret'}));
 });
 
 app.get('/', function(req, res) {
@@ -80,18 +82,25 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/signup', function (req, res) {
-  var newUser = new User(req.body).save();
+  Users.create(req.body);
   res.render('index');
 });
 
 app.post('/login', function (req, res) {
-  new User(req.body).fetch().then(function(model) {
-    if (model === null) {
+
+  var username = req.body.username;
+  var password = req.body.password;
+
+  new User({ username: username }).fetch().then(function(user) {
+    if (user === null) {
       console.log("Your memory sucks! Re-enter your password.");
       res.render('login');
     } else {
       console.log("Success.");
-      res.render('index');
+      app.session.regenerate(function() {
+        request.session.user = user;
+        res.redirect('index');
+      });
     }
   });
 });
