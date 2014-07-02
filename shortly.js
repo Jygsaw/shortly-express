@@ -96,17 +96,20 @@ app.post('/signup', function (req, res) {
 });
 
 app.post('/login', function (req, res) {
-
   var username = req.body.username;
   var password = req.body.password;
 
   new User({ username: username }).fetch().then(function(user) {
     if (user !== null) {
-      console.log("Success.");
-      util.createSession(req, res, user);
+      bcrypt.compare(password, user.get('password'), function(err, matchBool) {
+        if (matchBool) {
+          util.createSession(req, res, user);
+        } else {
+          res.redirect('login');
+        }
+      });
     } else {
-      console.log("Your memory sucks! Re-enter your password.");
-      res.render('login');
+      res.redirect('signup');
     }
   });
 });
