@@ -8,6 +8,7 @@ var User = require('./app/models/user');
 var Links = require('./app/collections/links');
 var Link = require('./app/models/link');
 var Click = require('./app/models/click');
+var bcrypt = require('bcrypt-nodejs');
 
 var app = express();
 var dirPath = "/Users/student/Code/justincheung/2014-06-shortly-express";
@@ -18,8 +19,8 @@ app.configure(function() {
   app.use(partials());
   app.use(express.bodyParser());
   app.use(express.static(dirPath + '/public'));
-  app.use(express.cookieParser());
-  app.use(express.cookieSession({secret: 'secret'}));
+  app.use(express.cookieParser('secret'));
+  app.use(express.session());
 });
 
 app.get('/', function(req, res) {
@@ -82,18 +83,16 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/signup', function (req, res) {
-console.log("signing up");
   var username = req.body.username;
   var password = req.body.password;
-  bcrypt.hash(password, null, null, function(hash) {
-    User.create({
+  bcrypt.hash(password, null, null, function(err, hash) {
+    Users.create({
       username: username,
       password: hash
+    }).then(function(user) {
+      util.createSession(req, res, user);
     });
   });
-
-
-  res.render('index');
 });
 
 app.post('/login', function (req, res) {
@@ -104,8 +103,7 @@ app.post('/login', function (req, res) {
   new User({ username: username }).fetch().then(function(user) {
     if (user !== null) {
       console.log("Success.");
-      exports.createSession(req, res, user);
-      res.redirect('index');
+      util.createSession(req, res, user);
     } else {
       console.log("Your memory sucks! Re-enter your password.");
       res.render('login');
