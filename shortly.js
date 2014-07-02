@@ -82,7 +82,11 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/signup', function (req, res) {
-  Users.create(req.body);
+console.log("signing up");
+  var username = req.body.username;
+  var password = req.body.password;
+
+  Users.create( { username: username, password: password });
   res.render('index');
 });
 
@@ -92,15 +96,13 @@ app.post('/login', function (req, res) {
   var password = req.body.password;
 
   new User({ username: username }).fetch().then(function(user) {
-    if (user === null) {
+    if (user !== null) {
+      console.log("Success.");
+      exports.createSession(req, res, user);
+      res.redirect('index');
+    } else {
       console.log("Your memory sucks! Re-enter your password.");
       res.render('login');
-    } else {
-      console.log("Success.");
-      app.session.regenerate(function() {
-        request.session.user = user;
-        res.redirect('index');
-      });
     }
   });
 });
