@@ -85,8 +85,14 @@ app.post('/signup', function (req, res) {
 console.log("signing up");
   var username = req.body.username;
   var password = req.body.password;
+  bcrypt.hash(password, null, null, function(hash) {
+    User.create({
+      username: username,
+      password: hash
+    });
+  });
 
-  Users.create( { username: username, password: password });
+
   res.render('index');
 });
 
